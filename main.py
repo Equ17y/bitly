@@ -84,11 +84,12 @@ def main():
     load_dotenv()
     token = os.environ['VK_API_TOKEN']
 
+    parser = argparse.ArgumentParser(description='Сокращение ссылок VK и подсчет кликов')
+    parser.add_argument('link', help='link для обработки (сокращение или подсчет кликов)')
+    args = parser.parse_args()
+    user_link = args.link
+
     try:
-        parser = argparse.ArgumentParser(description='Сокращение ссылок VK и подсчет кликов')
-        parser.add_argument('link', help='link для обработки (сокращение или подсчет кликов)')
-        args = parser.parse_args()
-        user_link = args.link
 
         if is_shorten_link(token, user_link):
             clicks = count_clicks(token, user_link)
@@ -98,20 +99,12 @@ def main():
             print(f'Сокращенная ссылка: {short_url}')
         
     except requests.exceptions.HTTPError as e:
-        print(f"Ошибка HTTP: {e}")
+        print("Ошибка HTTP: Проверьте правильность ссылки и токена доступа")
     except requests.exceptions.ConnectionError as e:
-        print(f"Ошибка соединения: {e}")
+        print("Ошибка соединения: Проверьте интернет-соединение")
     except requests.exceptions.Timeout as e:
-        print(f"Таймаут запроса: {e}")
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка запроса: {e}")
-    except KeyError as e:
-        print(f"Ошибка ключа в ответе API: {e}")
-    except ValueError as e:
-        print(f"Ошибка значения: {e}")
-    except Exception as e:
-        print(f"Неожиданная ошибка: {e}")
-        
+        print("Таймаут запроса: Сервер не ответил вовремя")
+
     
 if __name__ == "__main__":
     main()
